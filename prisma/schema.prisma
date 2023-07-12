@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model admins {
+  id           BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  uuid         Bytes     @unique(map: "idx_admins_uuid") @default(dbgenerated("(uuid_to_bin(uuid()))")) @db.Binary(16)
+  email        String    @unique(map: "email")
+  password     String    @db.LongText
+  nickname     String    @unique(map: "nickname")
+  active       Boolean   @default(true)
+  in_active_at DateTime?
+  created_at   DateTime
+  updated_at   DateTime?
+
+  @@index([email], map: "idx_admins_email")
+  @@index([nickname], map: "idx_admins_nickname")
+}
+
+model comments {
+  id           BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  uuid         Bytes     @unique(map: "idx_comments_uuid") @default(dbgenerated("(uuid_to_bin(uuid()))")) @db.Binary(16)
+  parent_id    BigInt?   @db.UnsignedBigInt
+  level        BigInt    @default(0) @db.UnsignedBigInt
+  post_id      BigInt    @db.UnsignedBigInt
+  user_id      BigInt    @db.UnsignedBigInt
+  content      String    @db.LongText
+  active       Boolean   @default(true)
+  in_active_at DateTime?
+  created_at   DateTime
+  updated_at   DateTime?
+  group_id     BigInt?   @db.UnsignedBigInt
+
+  @@index([active], map: "idx_comments_active")
+  @@index([group_id], map: "idx_comments_group_id")
+  @@index([level], map: "idx_comments_level")
+  @@index([parent_id], map: "idx_comments_parent_id")
+  @@index([post_id], map: "idx_comments_post_id")
+  @@index([user_id], map: "idx_comments_user_id")
+}
+
+model post_likes {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id    BigInt   @db.UnsignedBigInt
+  post_id    BigInt   @db.UnsignedBigInt
+  created_at DateTime
+
+  @@index([post_id], map: "idx_post_likes_post_id")
+  @@index([user_id], map: "idx_post_likes_user_id")
+}
+
+model posts {
+  id            BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
+  uuid          Bytes      @unique(map: "idx_posts_uuid") @default(dbgenerated("(uuid_to_bin(uuid()))")) @db.Binary(16)
+  user_id       BigInt     @db.UnsignedBigInt
+  mbti          posts_mbti
+  type          posts_type
+  title         String
+  content       String     @db.LongText
+  images        String     @db.LongText
+  like_count    Int        @default(0) @db.TinyInt
+  comment_count Int        @default(0) @db.TinyInt
+  active        Boolean    @default(true)
+  in_active_at  DateTime?
+  created_at    DateTime
+  updated_at    DateTime?
+
+  @@index([like_count], map: "idx_posts_like_count")
+  @@index([mbti], map: "idx_posts_mbti")
+  @@index([title], map: "idx_posts_title")
+  @@index([type], map: "idx_posts_type")
+  @@index([user_id], map: "idx_posts_user_id")
+}
+
+model reports {
+  id         BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+  type       reports_type
+  user_id    BigInt       @db.UnsignedBigInt
+  target_id  BigInt       @db.UnsignedBigInt
+  created_at DateTime
+
+  @@index([target_id], map: "idx_reports_target_id")
+  @@index([type], map: "idx_reports_type")
+  @@index([user_id], map: "idx_reports_user_id")
+}
+
+model tmps {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  created_at DateTime
+}
+
+model user_blocks {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id    BigInt   @db.UnsignedBigInt
+  block_id   BigInt   @db.UnsignedBigInt
+  created_at DateTime
+
+  @@index([block_id], map: "idx_user_blocks_block_id")
+  @@index([user_id], map: "idx_user_blocks_user_id")
+}
+
+model user_ratings {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id    BigInt   @db.UnsignedBigInt
+  rating     Float    @default(0) @db.Float
+  feedback   String?
+  created_at DateTime
+
+  @@index([user_id], map: "idx_user_ratings_user_id")
+}
+
+model user_temporary_passwords {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id    BigInt   @db.UnsignedBigInt
+  password   String   @db.LongText
+  created_at DateTime
+
+  @@index([user_id], map: "idx_user_temporary_passwords_user_id")
+}
+
+model user_tokens {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id    BigInt   @db.UnsignedBigInt
+  token      String   @db.LongText
+  created_at DateTime
+
+  @@index([user_id], map: "idx_user_tokens_user_id")
+}
+
+model users {
+  id           BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
+  uuid         Bytes      @unique(map: "idx_users_uuid") @default(dbgenerated("(uuid_to_bin(uuid()))")) @db.Binary(16)
+  email        String     @unique(map: "email")
+  password     String     @db.LongText
+  nickname     String     @unique(map: "nickname")
+  mbti         users_mbti
+  notification Boolean    @default(true)
+  active       Boolean    @default(true)
+  in_active_at DateTime?
+  created_at   DateTime
+  updated_at   DateTime?
+
+  @@index([email], map: "idx_users_email")
+  @@index([nickname], map: "idx_users_nickname")
+}
+
+enum reports_type {
+  POST
+  COMMENT
+}
+
+enum posts_mbti {
+  INTJ
+  INTP
+  ENTJ
+  ENTP
+  INFJ
+  INFP
+  ENFJ
+  ENFP
+  ISFJ
+  ISTJ
+  ESFJ
+  ESTJ
+  ISFP
+  ISTP
+  ESFP
+  ESTP
+}
+
+enum posts_type {
+  DAILY
+  LOVE
+  FRIEND
+}
+
+enum users_mbti {
+  INTJ
+  INTP
+  ENTJ
+  ENTP
+  INFJ
+  INFP
+  ENFJ
+  ENFP
+  ISFJ
+  ISTJ
+  ESFJ
+  ESTJ
+  ISFP
+  ISTP
+  ESFP
+  ESTP
+}

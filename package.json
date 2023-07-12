@@ -1,0 +1,30 @@
+{
+  "name": "ohsundosun-admin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "imports": {
+    "#util": "./util/index.js",
+    "#model": "./model/index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "@adminjs/express": "^6.0.0",
+    "@adminjs/prisma": "^4.0.1",
+    "@prisma/client": "4.13.0",
+    "adminjs": "^7.0.9",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-formidable": "^1.2.0",
+    "express-session": "^1.17.3",
+    "tslib": "^2.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "prisma": "4.13.0"
+  }
+}
