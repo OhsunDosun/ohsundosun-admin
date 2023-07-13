@@ -185,8 +185,8 @@ const admin = new AdminJS({
 });
 
 const DEFAULT_ADMIN = {
-  email: "admin@example.com",
-  password: "password",
+  email: env.adminEmail,
+  password: env.adminPwd,
 };
 
 const authenticate = async (email, password) => {
@@ -196,19 +196,17 @@ const authenticate = async (email, password) => {
   return null;
 };
 
-const secret = "very_secret_secret";
-
 const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
   admin,
   {
     authenticate,
-    cookiePassword: "very_secret_secret",
+    cookiePassword: env.cookieSecret,
   },
   null,
   {
     resave: true,
     saveUninitialized: true,
-    secret,
+    secret: env.sessionSecret,
   }
 );
 
